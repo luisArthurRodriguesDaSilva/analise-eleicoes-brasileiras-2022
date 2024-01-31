@@ -1,7 +1,14 @@
 import pandas as pd
+from difflib import get_close_matches
 
 
-watched_columns = ["SG_UF", "NM_MUNICIPIO", "CD_MUNICIPIO", "NR_PARTIDO", "QT_VOTOS"] # noqa
+watched_columns = [
+    "SG_UF",
+    "NM_MUNICIPIO",
+    "CD_MUNICIPIO",
+    "NR_PARTIDO",
+    "QT_VOTOS",
+]  # noqa
 
 BRASIL_UFS = [
     "RO",
@@ -46,3 +53,11 @@ def get_uf_df(uf):
         df = pd.read_csv(f, sep=";", encoding="latin-1")
         df = df[df["CD_CARGO_PERGUNTA"] == 1][watched_columns]
         return df
+
+
+def get_nearest(target, data):
+    return get_close_matches(target, data)[0]
+
+
+def string_code_to_int(string_code):
+    return int(string_code.replace("\xa0", ""))
