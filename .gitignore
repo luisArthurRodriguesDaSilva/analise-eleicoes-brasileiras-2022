@@ -1,3 +1,4 @@
-apresentações/pp_lula_by_municipio.csv
+apresentações/*csv
 notebooks/csvs
-
+*pyc
+*__pycache__/*
