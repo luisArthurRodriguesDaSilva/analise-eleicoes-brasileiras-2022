@@ -10,6 +10,47 @@ watched_columns = [
     "QT_VOTOS",
 ]  # noqa
 
+dict_ufs = {
+    "RIO DE JANEIRO": "RJ",
+    "SÃO PAULO": "SP",
+    "MINAS GERAIS": "MG",
+    "BAHIA": "BA",
+    "RIO GRANDE DO SUL": "RS",
+    "PARANÁ": "PR",
+    "CEARÁ": "CE",
+    "PERNAMBUCO": "PE",
+    "PARAÍBA": "PB",
+    "RIO GRANDE DO NORTE": "RN",
+    "ALAGOAS": "AL",
+    "MATO GROSSO": "MT",
+    "MATO GROSSO DO SUL": "MS",
+    "GOIÁS": "GO",
+    "MARANHÃO": "MA",
+    "PARÁ": "PA",
+    "AMAZONAS": "AM",
+    "TOCANTINS": "TO",
+    "RORAIMA": "RR",
+    "ACRE": "AC",
+    "AMAPÁ": "AP",
+    "SERGIPE": "SE",
+    "ESPÍRITO SANTO": "ES",
+    "SANTA CATARINA": "SC",
+    "DISTRITO FEDERAL": "DF",
+    'PIAUÍ': 'PI',
+    'RONDÔNIA': 'RO',
+    'RIO GRANDE DO SUL': 'RS'
+}
+
+
+def get_uf_sg(large_uf):
+    print(large_uf)
+    try:
+        return dict_ufs[get_nearest(large_uf, dict_ufs)]
+    except Exception as e:
+        print(e)
+        return "nan"
+
+
 BRASIL_UFS = [
     "RO",
     "AC",
