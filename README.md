@@ -24,11 +24,11 @@ abaixo alguns dos gráficos e imagens que aparecerão na apresentação
 
 ### grafico da diferença entre os candidatos osdenado pelo PIB
 
-<img src='readmeImgs/ordenado pelo pib.png'>
+<img src='OLD/readmeImgs/ordenado pelo pib.png'>
 
 ### distribuição geográfica dos votos pelo país
 
-<img src='readmeImgs/geo votos.png'>
+<img src='OLD/readmeImgs/geo votos.png'>
 
 
 ## Organização do repositório
