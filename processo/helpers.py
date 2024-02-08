@@ -203,12 +203,11 @@ linear = cmp.LinearColormap(
 
 
 def styleFunction(lulaDf):
+    values = lambda feature: lulaDf[lulaDf["municipio"] == feature["properties"]["name"]].values[0]# noqa
     return lambda feature: (
         {
             "fillColor": linear(
-                lulaDf[lulaDf["municipio"] == feature["properties"]["name"]].values[
-                    0
-                ][  # noqa
+                values(feature)[
                     1
                 ]
                 * 100
