@@ -96,7 +96,11 @@ def get_uf_df(uf):
 
 
 def get_nearest(target, data):
-    return get_close_matches(target, data)[0]
+    try:
+        return get_close_matches(target, data)[0]
+    except Exception as e:
+        print(e)
+        return "nan"
 
 
 def string_code_to_int(string_code):

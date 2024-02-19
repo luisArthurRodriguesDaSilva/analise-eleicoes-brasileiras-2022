@@ -1,7 +1,13 @@
 import folium
 import branca.colormap as cmp
 from difflib import get_close_matches
-from helpers import get_uf_Code, geo_json_url, dados_municipais_salvos_path
+from helpers import (
+    get_uf_Code,
+    geo_json_url,
+    dados_municipais_salvos_path,
+    BRASIL_UFS,
+    get_nearest,
+)
 import requests
 from zipfile import ZipFile
 import os
@@ -93,7 +99,7 @@ def getPP(ufMunData: pd.DataFrame, mun: str, num) -> float:
             return 0.5
 
 
-def getDfs(ufMunData, munNames):
+def getDfs(ufMunData, munNames, values: str = "% Votos"):
     lulaScores = list(map(lambda mun: getPP(ufMunData, mun, 13), munNames))
     lulaDf = pd.DataFrame(
         np.c_[munNames, lulaScores], columns=["municipio", "% Votos"]
@@ -132,6 +138,51 @@ def generateUfMap(ufs: list) -> folium.Map:
         lulaDf = getDfs(ufMunData, munNames)
 
         folium.GeoJson(geo_data, style_function=styleFunction(lulaDf)).add_to(
+            mapa
+        )  # noqa
+
+    linear.add_to(mapa)
+    folium.LayerControl().add_to(mapa)
+    return mapa
+
+
+def values(df, feature):
+    try:
+        return df[df["NM_MUNICIPIO"] == feature["properties"]["name"]].values[0]
+    except Exception as e:
+        print(e)
+        return df[
+            df["NM_MUNICIPIO"] == get_nearest_mun(df, feature["properties"]["name"])
+        ].values[0]
+    return df[df["NM_MUNICIPIO"] == feature["properties"]["name"]].values[0]  # noqa
+
+
+def default_style_function(df: pd.DataFrame):
+    print("style function")
+    return lambda feature: (
+        {
+            "fillColor": linear(values(df, feature)[1]),
+            "color": "black",
+            "weight": 1,
+            "fillOpacity": 1,
+        }
+    )
+
+
+def generate_map(
+    df: pd.DataFrame,
+    values_column: str,
+    style_function=default_style_function,
+    only=BRASIL_UFS,
+):
+    mapa = folium.Map(location=[-16, -45], zoom_start=4.5)
+    for i, uf in enumerate(only):
+        geo_data, munNames = get_geo_json(uf)
+        print("a")
+        folium.GeoJson(
+            geo_data,
+            style_function=style_function(df[["NM_MUNICIPIO", values_column]]),  # noqa
+        ).add_to(
             mapa
         )  # noqa
 
