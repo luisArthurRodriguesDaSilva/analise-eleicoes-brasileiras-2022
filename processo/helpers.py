@@ -60,28 +60,36 @@ def get_uf_sg(large_uf: str):
         return "nan"
 
 
-BRASIL_UFS = [
-    "RO",
-    "AC",
-    "AM",
-    "RR",
-    "PA",
-    "AP",
-    "TO",
-    "MA",
-    "PI",
-    "CE",
-    "RN",
-    "PB",
-    "PE",
-    "AL",
-    "SE",
-    "BA",
-    "MG",
-    "ES",
-    "RJ",
-    "https://www.oobj.com.br/bc/article/quais-os-c%C3%B3digos-de-cada-uf-no-brasil-465.html",  # noqa
-][0]
+brasil_ufs = [
+    "ac",
+    "al",
+    "am",
+    "ap",
+    "ba",
+    "ce",
+    "df",
+    "es",
+    "go",
+    "ma",
+    "mt",
+    "ms",
+    "mg",
+    "pa",
+    "pb",
+    "pr",
+    "pe",
+    "pi",
+    "rj",
+    "rn",
+    "ro",
+    "rs",
+    "rr",
+    "sc",
+    "se",
+    "sp",
+    "to",
+]
+BRASIL_UFS = list(map(lambda x: x.upper(), brasil_ufs))
 
 
 def get_uf_Code(uf):
