@@ -6,7 +6,6 @@ from helpers import (
     geo_json_url,
     dados_municipais_salvos_path,
     BRASIL_UFS,
-    get_nearest,
 )
 import requests
 from zipfile import ZipFile
@@ -108,21 +107,67 @@ def getDfs(ufMunData, munNames, values: str = "% Votos"):
     return lulaDf
 
 
-linear = cmp.LinearColormap(
-    [(0, 150, 0), (255, 255, 255), (150, 0, 0)],
-    vmin=0,
-    vmax=100,
-    caption="% de votos para Lula",
-)
+# linear = cmp.LinearColormap(
+#     [(0, 150, 0), (255, 255, 255), (150, 0, 0)],
+#     vmin=0,
+#     vmax=100,
+#     caption="% de votos para Lula",
+# )
 
 
-def styleFunction(lulaDf):
+# def styleFunction(lulaDf):
+#     def values(feature):
+#         print(feature)
+#         return lulaDf[lulaDf["municipio"] == feature["properties"]["name"]].values[ # noqa
+#             0
+#         ]  # noqa
+
+#     return lambda feature: (
+#         {
+#             "fillColor": linear(values(feature)[1] * 100),
+#             "color": "black",
+#             "weight": 1,
+#             "fillOpacity": 1,
+#         }
+#     )
+
+
+# def generateUfMap(ufs: list) -> folium.Map:
+#     mapa = folium.Map(location=[-16, -45], zoom_start=4.5)
+#     for i, uf in enumerate(ufs):
+#         geo_data, munNames = get_geo_json(uf)
+#         ufMunData = getUfData(uf)
+#         lulaDf = getDfs(ufMunData, munNames)
+#         print(lulaDf)
+#         folium.GeoJson(geo_data, style_function=styleFunction(lulaDf)).add_to(    # noqa
+#             mapa
+#         )  # noqa
+
+#     linear.add_to(mapa)
+#     folium.LayerControl().add_to(mapa)
+#     return mapa
+
+
+def get_value_trated(df, values_column, mun):
+    try:
+        return df[df["NM_MUNICIPIO"] == mun][values_column].values[0]
+    except Exception as e:
+        try:
+            print(e, "deu erro na atribuição 1")
+            return df[df["NM_MUNICIPIO"] == mun][values_column].values[0]
+        except Exception as e:
+            print(e, "deu erro na atribuição 2")
+            return df[values_column].mean()
+
+
+def default_style_function(df: pd.DataFrame, linear: cmp.LinearColormap):
+
     def values(feature):
-        lulaDf[lulaDf["municipio"] == feature["properties"]["name"]].values[0]  # noqa
+        return df[df["NM_MUNICIPIO"] == feature["properties"]["name"]].values[0]  # noqa
 
     return lambda feature: (
         {
-            "fillColor": linear(values(feature)[1] * 100),
+            "fillColor": linear(values(feature)[1]),  # noqa
             "color": "black",
             "weight": 1,
             "fillOpacity": 1,
@@ -130,42 +175,12 @@ def styleFunction(lulaDf):
     )
 
 
-def generateUfMap(ufs: list) -> folium.Map:
-    mapa = folium.Map(location=[-16, -45], zoom_start=4.5)
-    for i, uf in enumerate(ufs):
-        geo_data, munNames = get_geo_json(uf)
-        ufMunData = getUfData(uf)
-        lulaDf = getDfs(ufMunData, munNames)
-
-        folium.GeoJson(geo_data, style_function=styleFunction(lulaDf)).add_to(
-            mapa
-        )  # noqa
-
-    linear.add_to(mapa)
-    folium.LayerControl().add_to(mapa)
-    return mapa
-
-
-def values(df, feature):
-    try:
-        return df[df["NM_MUNICIPIO"] == feature["properties"]["name"]].values[0]
-    except Exception as e:
-        print(e)
-        return df[
-            df["NM_MUNICIPIO"] == get_nearest_mun(df, feature["properties"]["name"])
-        ].values[0]
-    return df[df["NM_MUNICIPIO"] == feature["properties"]["name"]].values[0]  # noqa
-
-
-def default_style_function(df: pd.DataFrame):
-    print("style function")
-    return lambda feature: (
-        {
-            "fillColor": linear(values(df, feature)[1]),
-            "color": "black",
-            "weight": 1,
-            "fillOpacity": 1,
-        }
+def get_linear(df: pd.DataFrame, values_column: str, colors=["blue", "red"]):
+    return cmp.LinearColormap(
+        colors=colors,
+        vmin=df[values_column].min(),
+        vmax=df[values_column].max(),
+        caption=f"{values_column}",
     )
 
 
@@ -173,15 +188,23 @@ def generate_map(
     df: pd.DataFrame,
     values_column: str,
     style_function=default_style_function,
+    linear=None,
     only=BRASIL_UFS,
 ):
+    linear = linear or get_linear(df, values_column)
     mapa = folium.Map(location=[-16, -45], zoom_start=4.5)
     for i, uf in enumerate(only):
         geo_data, munNames = get_geo_json(uf)
-        print("a")
+        fill_data = list(
+            map(lambda mun: get_value_trated(df, values_column, mun), munNames)
+        )  # noqa
+        fill_df = pd.DataFrame(
+            np.c_[munNames, fill_data], columns=["NM_MUNICIPIO", values_column]
+        )  # noqa
+        fill_df[values_column] = pd.Series(fill_data, dtype=float)
         folium.GeoJson(
             geo_data,
-            style_function=style_function(df[["NM_MUNICIPIO", values_column]]),  # noqa
+            style_function=style_function(fill_df, linear=linear),  # noqa
         ).add_to(
             mapa
         )  # noqa
