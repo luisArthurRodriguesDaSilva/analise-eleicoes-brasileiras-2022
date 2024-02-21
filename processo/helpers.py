@@ -1,5 +1,8 @@
 import pandas as pd
 from difflib import get_close_matches
+from zipfile import ZipFile
+import os
+import requests
 
 watched_columns = [
     "SG_UF",
@@ -113,3 +116,36 @@ def get_nearest(target, data):
 
 def string_code_to_int(string_code):
     return int(string_code.replace("\xa0", ""))
+
+
+def downloadUfData(uf):
+    path = (
+        f"{dados_municipais_salvos_path}bweb_2t_{uf.upper()}_311020221535.csv"  # noqa
+    )
+    if not os.path.isfile(path):
+        zipado = requests.get(f"{tse_url}bweb_2t_{uf.upper()}_311020221535.zip")  # noqa
+
+        file = "./zipe.zip"
+        open(file, "wb").write(zipado.content)
+
+        with ZipFile(file, "r") as zip:
+            zip.printdir()
+            zip.extractall(dados_municipais_salvos_path)
+        os.remove(f"{dados_municipais_salvos_path}leiame-boletimurnaweb.pdf")
+        os.remove("zipe.zip")
+
+
+def getUfData(uf: str) -> pd.DataFrame:
+    downloadUfData(uf)
+    with open(
+        f"{dados_municipais_salvos_path}bweb_2t_{uf.upper()}_311020221535.csv",
+        "rb",
+    ) as f:
+        munUfData = pd.read_csv(f, sep=";", encoding="latin-1")
+
+    simpleData = munUfData[["NM_MUNICIPIO", "NR_PARTIDO", "QT_VOTOS"]]
+
+    simpUfdata = simpleData.groupby(by=["NM_MUNICIPIO", "NR_PARTIDO"]).agg(
+        quantidade=("QT_VOTOS", "sum")
+    )
+    return simpUfdata
