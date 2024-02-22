@@ -3,6 +3,7 @@ from difflib import get_close_matches
 from zipfile import ZipFile
 import os
 import requests
+from helpers import tse_url
 
 watched_columns = [
     "SG_UF",
