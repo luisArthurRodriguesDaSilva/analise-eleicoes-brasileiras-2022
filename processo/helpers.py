@@ -3,7 +3,6 @@ from difflib import get_close_matches
 from zipfile import ZipFile
 import os
 import requests
-from helpers import tse_url
 
 watched_columns = [
     "SG_UF",
@@ -43,6 +42,8 @@ dict_ufs = {
     "RONDÔNIA": "RO",
     "RIO GRANDE DO SUL": "RS",
 }
+
+tse_url = "https://cdn.tse.jus.br/estatistica/sead/eleicoes/eleicoes2022/buweb/"  # noqa
 
 geo_json_url = (
     "https://raw.githubusercontent.com/tbrugz/geodata-br/master/geojson/"  # noqa
