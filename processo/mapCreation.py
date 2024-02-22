@@ -1,11 +1,7 @@
 import folium
 import branca.colormap as cmp
 from difflib import get_close_matches
-from helpers import (
-    get_uf_Code,
-    geo_json_url,
-    BRASIL_UFS,
-)
+from helpers import get_uf_Code, geo_json_url, BRASIL_UFS
 import requests
 import pandas as pd
 import numpy as np
@@ -34,9 +30,6 @@ def get_geo_json(uf):
 
     munNames = get_municipe_names(geo_data_uf)
     return geo_data_uf, munNames
-
-
-tse_url = "https://cdn.tse.jus.br/estatistica/sead/eleicoes/eleicoes2022/buweb/"  # noqa
 
 
 def get_nearest_mun(ufMunData: pd.DataFrame, mun: str) -> str:
@@ -69,11 +62,21 @@ def default_style_function(df: pd.DataFrame, linear: cmp.LinearColormap):
     )
 
 
-def get_linear(df: pd.DataFrame, values_column: str, colors=["blue", "red"]):
+def get_linear(
+    df: pd.DataFrame,
+    values_column: str,
+    colors: list[str],
+    vmin=None,
+    vmax=None,
+):
+    if vmin == vmax:
+        vmin = df[values_column].min()
+        vmax = df[values_column].max()
+    print(min, max)
     return cmp.LinearColormap(
         colors=colors,
-        vmin=df[values_column].min(),
-        vmax=df[values_column].max(),
+        vmin=vmin,
+        vmax=vmax,
         caption=f"{values_column}",
     )
 
@@ -82,10 +85,12 @@ def generate_map(
     df: pd.DataFrame,
     values_column: str,
     style_function=default_style_function,
-    linear=None,
+    colors=["blue", "red"],
     only=BRASIL_UFS,
+    vmin=None,
+    vmax=None,
 ):
-    linear = linear or get_linear(df, values_column)
+    linear = get_linear(df, values_column, colors, vmin=vmin, vmax=vmax)
     mapa = folium.Map(location=[-16, -45], zoom_start=4.5)
     for i, uf in enumerate(only):
         geo_data, munNames = get_geo_json(uf)
