@@ -22,13 +22,11 @@ Dentro da análise foram abordados pontos como:
 
 abaixo alguns dos gráficos e imagens que aparecerão na apresentação
 
-### grafico da diferença entre os candidatos osdenado pelo PIB
-
-<img src='OLD/readmeImgs/ordenado pelo pib.png'>
+<img src='RESULTADOS/IMAGENS/VOTOS X PIB PER VOTO densidade.png'>
 
 ### distribuição geográfica dos votos pelo país
 
-<img src='OLD/readmeImgs/geo votos.png'>
+<img src='RESULTADOS/IMAGENS/mapa panorama brasileiro.png'>
 
 
 ## Organização do repositório
