@@ -33,10 +33,4 @@ abaixo alguns dos gráficos e imagens que aparecerão na apresentação
 
 O repositório está dividido em 3 principais partes:
 
-1. [Dados utilizados](https://github.com/luisArthurRodriguesDaSilva/analise-eleicoes-brasileiras-2022/tree/master/dados%20salvos)
-2. [código nescessario para modelar e exibir os dados](https://github.com/luisArthurRodriguesDaSilva/analise-eleicoes-brasileiras-2022/tree/master/notebooks)
-3. [A apresentação da análise](https://github.com/luisArthurRodriguesDaSilva/analise-eleicoes-brasileiras-2022/blob/master/apresenta%C3%A7%C3%A3o.ipynb)
-
-## recomendação
-
-recomendo que veja a apresentação pelo [notebook do google colab](https://colab.research.google.com/github/luisArthurRodriguesDaSilva/analise-eleicoes-brasileiras-2022/blob/master/apresenta%C3%A7%C3%A3o.ipynb)
+1. [Análise exploratória](https://github.com/luisArthurRodriguesDaSilva/analise-eleicoes-brasileiras-2022/blob/master/processo/explorat%C3%B3ria.ipynb)
